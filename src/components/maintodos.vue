@@ -51,7 +51,7 @@ export default {
     // eslint-disable-next-line vue/return-in-computed-property
     list() {
       const { path } = this.$route;
-      // 路由
+      // 路由配置
       const { list } = this.$store.state;
       if (path === '/active') {
         return list.filter(item => !item.done);
