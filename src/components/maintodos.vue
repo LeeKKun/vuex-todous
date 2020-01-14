@@ -1,25 +1,35 @@
 <template>
   <section class="main">
-      <input id="toggle-all" class="toggle-all" type="checkbox">
+      <input id="toggle-all" class="toggle-all" type="checkbox"  v-model="checall">
       <label for="toggle-all">Mark all as complete</label>
       <ul class="todo-list">
         <!-- These are here just to show the structure of the list items -->
-        <li :class=" {completed: item.done} " v-for="item in list" :key="item.id">
+        <li :class=" {completed: item.done, editing: item.id === currentId} "
+         v-for="item in list" :key="item.id">
           <div class="view">
-            <input class="toggle" type="checkbox" :checked="item.done" >
-            <label>{{ item.name }}</label>
-            <button @click="del(item.id)" class="destroy"></button>
+            <input class="toggle" type="checkbox"
+             :checked="item.done" @change="change({id: item.id})" >
+            <label @dblclick="showadd(item.id, item.name)">{{ item.name }}</label>
+            <button @click="del({id: item.id})" class="destroy"></button>
           </div>
-          <input class="edit" value="Create a TodoMVC template">
+          <input v-focus="item.id === currentId"
+           class="edit" v-model="name" @keyup.enter="edit(item.id)">
         </li>
       </ul>
     </section>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+// mapMutations可以把vuex中的Mutations映射为方法
+import { mapState, mapMutations } from 'vuex';
 
 export default {
+  data() {
+    return {
+      currentId: '',
+      name: '',
+    };
+  },
   // computed: {
   //   // 可以自己提供计算属性来拿取vuex的状态
   //   list() {
@@ -37,14 +47,61 @@ export default {
 
   // 添加自己的计算属性
   computed: {
-    ...mapState(['list', 'op']),
+    ...mapState(['op']),
+    // eslint-disable-next-line vue/return-in-computed-property
+    list() {
+      const { path } = this.$route;
+
+      const { list } = this.$store.state;
+      if (path === '/active') {
+        return list.filter(item => !item.done);
+      } if (path === '/completed') {
+        return list.filter(item => item.done);
+      }
+      return list;
+    },
+    checall: {
+      get() {
+        return this.list.every(item => item.done);
+      },
+      set(value) {
+        console.log(value);
+        this.$store.commit('checall', {
+          done: value,
+        });
+      },
+    },
   },
   methods: {
-    del(id) {
-      this.$store.commit('del', {
-        id,
-      });
+    ...mapMutations(['del', 'change']),
+    // 显示
+    showadd(id, name) {
+      console.log(id);
+      this.currentId = id;
+      console.log(this.currentId);
+
+      this.name = name;
     },
+    // 修改内容
+    edit(id) {
+      this.$store.commit('edit', {
+        id,
+        name: this.name,
+      });
+      this.currentId = '';
+    },
+  },
+  directives: {
+    // 自动焦距
+    focus: {
+      update(el, binding) {
+        // console.log(el, binding.value);
+        if (binding.value) {
+          el.focus();
+        }
+      },
+    },
+
   },
 };
 </script>

@@ -24,6 +24,7 @@ export default {
       this.$store.commit('add', {
         name: this.name,
       });
+      this.name = '';
     },
   },
 };

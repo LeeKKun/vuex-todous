@@ -1,27 +1,34 @@
 <template>
-    <footer class="footer">
-      <!-- This should be `0 items left` by default -->
-      <span class="todo-count"><strong>0</strong> item left</span>
-      <!-- Remove this if you don't implement routing -->
+    <footer class="footer" v-show="list.length > 0">
+      <span class="todo-count"><strong>{{ leftcount }}</strong> item left</span>
       <ul class="filters">
         <li>
-          <a class="selected" href="#/">All</a>
+          <!-- 精确匹配加exact属性 -->
+          <router-link exact class="" to="/">All</router-link>
         </li>
         <li>
-          <a href="#/active">Active</a>
+          <router-link to="/active">Active</router-link>
         </li>
         <li>
-          <a href="#/completed">Completed</a>
+          <router-link to="/completed">Completed</router-link>
         </li>
       </ul>
       <!-- Hidden if no completed items are left ↓ -->
-      <button class="clear-completed">Clear completed</button>
+      <button @click="clear" v-show="isshow" class="clear-completed">Clear completed</button>
     </footer>
 </template>
 
 <script>
-export default {
+import { mapState, mapGetters, mapMutations } from 'vuex';
 
+export default {
+  computed: {
+    ...mapState(['list']),
+    ...mapGetters(['leftcount', 'isshow']),
+  },
+  methods: {
+    ...mapMutations(['clear']),
+  },
 };
 </script>
 
