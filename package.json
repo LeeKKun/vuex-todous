@@ -37,10 +37,11 @@
     ],
     "rules": {
       "no-shadow": 0,
-      "no-console": 0,
       "no-param-reassign": 0,
-
-      "no-unused-vars": 0
+      "no-console":"off",
+      "eqeqeq": "off",
+      "no-alert":"off",
+      "no-unused-vars": "off"
     },
     "parserOptions": {
       "parser": "babel-eslint"
