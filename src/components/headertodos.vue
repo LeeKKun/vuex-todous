@@ -22,7 +22,7 @@ export default {
     };
   },
   created() {
-    console.log("日常提交github代码！绿油油的一天开始啦，第一天");
+    console.log("日常提交github代码！绿油油的一天开始啦，20200721-2");
   },
   computed: {
     ...mapState(["list"])
